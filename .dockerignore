@@ -1,0 +1,22 @@
+# node modules folder
+node_modules
+
+# __test__
+__test__
+
+# .gitignore
+.gitignore
+
+# .git
+.git
+*/.git
+*/*/.git
+
+# .idea
+.idea
+
+# eslintrc.js 
+.eslintrc.js 
+
+# .prettierrc
+.prettierrc.js

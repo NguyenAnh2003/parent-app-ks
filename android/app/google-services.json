@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "876981519324",
+    "project_id": "rnative-app-61fd9",
+    "storage_bucket": "rnative-app-61fd9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:876981519324:android:157ea6bcb2b45887dc4519",
+        "android_client_info": {
+          "package_name": "com.myapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwcxHA9COSl9j5oIzmTNi4cbBonTisWKs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
