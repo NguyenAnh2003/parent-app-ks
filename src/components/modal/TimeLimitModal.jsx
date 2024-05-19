@@ -1,4 +1,4 @@
-import { View, Text, Modal, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Modal, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -14,6 +14,11 @@ const TimeLimitModal = ({ modalVisible, setModalVisible, childId }) => {
     try {
       const status = await createTimeLim(childId, selectedHour, selectedMinute);
       console.log({ status });
+      Alert.alert(
+        "Time Limit Set",
+        `You have set a time limit of ${selectedHour} hours and ${selectedMinute} minutes.`,
+        [{ text: "OK", onPress: () => setModalVisible(false) }]
+      );
     } catch (error) {
       console.log(error.message);
     }
