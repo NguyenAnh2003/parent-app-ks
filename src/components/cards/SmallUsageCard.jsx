@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native';
 import React from 'react';
-import { humanReadableMillis } from '../../utils/utils';
+import { humanReadableMillis } from '../../libs';
 
 const SmallUsageCard = React.memo(({ color, name, timeUsed }) => {
   /**
@@ -15,7 +15,7 @@ const SmallUsageCard = React.memo(({ color, name, timeUsed }) => {
         gap: 20,
         justifyContent: 'space-between',
         width: 300,
-        paddingVertical: 8
+        paddingVertical: 8,
       }}
     >
       <View style={{ flexDirection: 'row', gap: 10 }}>
@@ -23,7 +23,7 @@ const SmallUsageCard = React.memo(({ color, name, timeUsed }) => {
           style={{
             width: 20,
             height: 20,
-            backgroundColor: color,   
+            backgroundColor: color,
           }}
         ></View>
         <Text style={{ color: 'black' }}>{name} </Text>

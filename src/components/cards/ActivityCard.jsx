@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Image } from 'react-native';
 import React from 'react';
-import { humanReadableMillis } from '../../utils/utils';
+import { humanReadableMillis } from '../../libs';
 
 const styles = StyleSheet.create({
   pImage: {

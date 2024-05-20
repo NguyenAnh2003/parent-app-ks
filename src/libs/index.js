@@ -6,3 +6,4 @@ export * from './supabase/notfication.services';
 export * from './supabase/parent.services';
 export * from './supabase/usage.services';
 export * from './getCurrentUser';
+export * from './utils';

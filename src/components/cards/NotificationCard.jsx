@@ -1,6 +1,6 @@
 import { View, Text, Image } from 'react-native';
 import React, { useEffect, useMemo, useState } from 'react';
-import { convertTimestamp } from '../../utils/utils';
+import { convertTimestamp } from '../../libs/utils';
 
 const NotificationCard = ({ id, childData, date, description }) => {
   const formatedDate = useMemo(() => {

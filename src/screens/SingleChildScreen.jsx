@@ -154,22 +154,6 @@ const SingleChildScreen = ({ route, navigation }) => {
     }
   };
 
-  // useEffect(() => {
-  //   /** */
-  //   const fetchData = async () => {
-  //     const processedPackage = await AppPackaging.preprocessAppPackageInfo(
-  //       dataBasedonTime
-  //     );
-
-  //     if (processedPackage) {
-  //       dispatch({ type: 'FETCH_ACTIVITIES', payload: processedPackage });
-  //       setActivities(processedPackage);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [dataBasedonTime, option]);
-
   /** fetch child data by childId */
   const fetchActivities = async () => {
     const activities = await getAllActivities(childId);
@@ -232,8 +216,6 @@ const SingleChildScreen = ({ route, navigation }) => {
         </View>
       ),
     });
-
-    
 
     fetchActivities();
 
