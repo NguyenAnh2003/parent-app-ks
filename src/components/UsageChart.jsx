@@ -81,7 +81,7 @@ const UsageChart = React.memo(({ activities }) => {
 
       // Iterate through the array
       arr.forEach((obj) => {
-        const name = obj.appName; // Get the name
+        const name = obj.name; // Get the name
         const number = parseInt(obj.timeUsed); // Get the number
 
         // If name already exists in collapsedArray, add the number to it

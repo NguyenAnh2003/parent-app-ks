@@ -65,16 +65,7 @@ export const c = [
     dateUsed: '2024-05-20T00:00:00+00:00',
     id: 6954,
     packageName: 'com.myapp',
-    timeUsed: 17617239,
-  },
-  {
-    appName: 'MyApp',
-    childId: 'b36a72b2-0e6b-4f2e-b530-dc7cb9f3dae6',
-    created_at: '2024-05-20T13:04:37.260224+00:00',
-    dateUsed: '2024-05-20T00:00:00+00:00',
-    id: 69541,
-    packageName: 'com.myapp',
-    timeUsed: 17617239,
+    timeUsed: 176172,
   },
   {
     appName: 'Facebook',

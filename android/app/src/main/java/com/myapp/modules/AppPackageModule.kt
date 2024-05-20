@@ -53,6 +53,8 @@ class AppPackageModule(reactApplicationContext: ReactApplicationContext) : React
                 bitmap.compress(CompressFormat.PNG, 100, outputStream)
                 val imageBytes = outputStream.toByteArray()
                 result = Base64.encodeToString(imageBytes, Base64.DEFAULT)
+            } else {
+                Log.d("shit", "shitttt") 
             }
             return result
         } catch (e: java.lang.Exception) {
@@ -73,7 +75,7 @@ class AppPackageModule(reactApplicationContext: ReactApplicationContext) : React
                 val packageInfo = appPackages.getMap(i)
 
                 packageMap.putString("id", packageInfo.getString("id"))
-                packageMap.putString("name", packageInfo.getString("name"))
+                packageMap.putString("name", packageInfo.getString("appName"))
                 packageMap.putString("packageName", packageInfo.getString("packageName"))
 
                 /** base64 icon */

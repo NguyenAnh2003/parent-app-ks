@@ -23,7 +23,7 @@ const SmallUsageCard = React.memo(({ color, name, timeUsed }) => {
           style={{
             width: 20,
             height: 20,
-            backgroundColor: color,
+            backgroundColor: color,   
           }}
         ></View>
         <Text style={{ color: 'black' }}>{name} </Text>

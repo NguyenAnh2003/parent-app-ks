@@ -97,12 +97,33 @@ const SingleChildScreen = ({ route, navigation }) => {
   const options = ['recent', '5 days'];
 
   /** state */
-  const [activities, setActivities] = useState(packageList);
+  // const [activities, setActivities] = useState(packageList);
   const [refresh, setRefresh] = useState(false);
 
   const onRefresh = useCallback(() => {
     setRefresh(true);
     /** fetch data again */
+    const fetchActivities = async () => {
+      const activities = await getAllActivities(childId);
+
+      if (activities) {
+        const processedActivities = c.map((i) => {
+          const processedDateUsed = i.dateUsed.split('T')[0];
+          const currentTimestamp = Number(i.timeUsed);
+          const id = i.id.toString();
+          return {
+            ...i,
+            id: id,
+            dateUsed: processedDateUsed,
+            timeUsed: currentTimestamp,
+          };
+        });
+        dispatch({ type: 'FETCH_ACTIVITIES', payload: processedActivities });
+      }
+    };
+
+    fetchActivities();
+
     setRefresh(false);
   }, []);
 
@@ -142,20 +163,31 @@ const SingleChildScreen = ({ route, navigation }) => {
     }
   }, [option]);
 
-  useEffect(() => {
-    /** */
-    const fetchData = async () => {
-      const processedPackage = await AppPackaging.preprocessAppPackageInfo(
-        dataBasedonTime
-      );
+  const processAppIcon = async (activities) => {
+    const processedPackage = await AppPackaging.preprocessAppPackageInfo(
+      activities
+    );
 
-      if (processedPackage) {
-        dispatch({ type: 'FETCH_ACTIVITIES', payload: processedPackage });
-      }
-    };
+    if (processedPackage) {
+      return processedPackage;
+    }
+  };
 
-    fetchData();
-  }, [dataBasedonTime, option]);
+  // useEffect(() => {
+  //   /** */
+  //   const fetchData = async () => {
+  //     const processedPackage = await AppPackaging.preprocessAppPackageInfo(
+  //       dataBasedonTime
+  //     );
+
+  //     if (processedPackage) {
+  //       dispatch({ type: 'FETCH_ACTIVITIES', payload: processedPackage });
+  //       setActivities(processedPackage);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, [dataBasedonTime, option]);
 
   /** setup header when nav & childId change */
   useEffect(() => {
@@ -199,8 +231,6 @@ const SingleChildScreen = ({ route, navigation }) => {
     const fetchActivities = async () => {
       const activities = await getAllActivities(childId);
 
-      console.log({ activities });
-
       if (activities) {
         const processedActivities = c.map((i) => {
           const processedDateUsed = i.dateUsed.split('T')[0];
@@ -213,7 +243,12 @@ const SingleChildScreen = ({ route, navigation }) => {
             timeUsed: currentTimestamp,
           };
         });
-        dispatch({ type: 'FETCH_ACTIVITIES', payload: processedActivities });
+
+        const result = await processAppIcon(processedActivities);
+
+        console.log({result});
+
+        dispatch({ type: 'FETCH_ACTIVITIES', payload: result });
       }
     };
 
@@ -343,7 +378,7 @@ const SingleChildScreen = ({ route, navigation }) => {
                     {state.activities?.map((i, index) => (
                       <ActivityCard
                         key={index}
-                        packageName={i.appName}
+                        packageName={i.name}
                         packageImage={i.icon}
                         packageTimeUsed={i.timeUsed}
                         packageDateUsed={i.dateUsed}
@@ -367,7 +402,7 @@ const SingleChildScreen = ({ route, navigation }) => {
               )}
             </View>
             {/** activities last week view */}
-            {activities?.length !== 0 ? (
+            {state.activities?.length !== 0 ? (
               <>
                 <Text
                   style={{
@@ -379,7 +414,9 @@ const SingleChildScreen = ({ route, navigation }) => {
                 >
                   Usage Chart
                 </Text>
-                {state.activities && <UsageChart activities={state.activities} />}
+                {state.activities && (
+                  <UsageChart activities={state.activities} />
+                )}
               </>
             ) : (
               <></>
