@@ -23,7 +23,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import ActivityCard from '../components/cards/ActivityCard';
 import UsageChart from '../components/UsageChart';
 import StickyButton from '../components/buttons/StickyButton';
-import { deleteChild, getAllActivities } from '../libs';
+import { deleteChild, getAllActivities, processAppIcon } from '../libs';
 import { c, packageList } from '../mock/activities';
 import TimeLimitModal from '../components/modal/TimeLimitModal';
 import SplashScreen from './SplashScreen';
@@ -78,34 +78,25 @@ const SingleChildScreen = ({ route, navigation }) => {
 
   /** expand */
   const [expand, setExpand] = useState(false);
-
   /** modal */
   const [modalVisible, setModalVisible] = useState(false);
-
   /** reducer */
   const [state, dispatch] = useReducer(reducer, {
     activities: [],
     isFetching: true,
   });
-
-  /** native module */
-  const { AppPackaging } = NativeModules;
   /** childId -> fetchDataByChildId */
   const { childId, childName, childImage, phoneType } = route.params;
   /** option */
   const [option, setOption] = useState('recent');
   const options = ['recent', '5 days'];
-
-  /** state */
   // const [activities, setActivities] = useState(packageList);
   const [refresh, setRefresh] = useState(false);
 
   const onRefresh = useCallback(() => {
-    setRefresh(true);
-
-    fetchActivities();
-
-    setRefresh(false);
+    setRefresh(true); // 
+    fetchActivities(); //
+    setRefresh(false); //
   }, []);
 
   const dataBasedonTime = useMemo(() => {
@@ -143,16 +134,6 @@ const SingleChildScreen = ({ route, navigation }) => {
       }
     }
   }, [option, state.activities]);
-
-  const processAppIcon = async (activities) => {
-    const processedPackage = await AppPackaging.preprocessAppPackageInfo(
-      activities
-    );
-
-    if (processedPackage) {
-      return processedPackage;
-    }
-  };
 
   /** fetch child data by childId */
   const fetchActivities = async () => {

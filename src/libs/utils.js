@@ -1,3 +1,6 @@
+import { NativeModules } from 'react-native';
+
+
 /** convert time */
 export const convertTimestamp = (timestamp) => {
   const dateObject = new Date(timestamp);
@@ -43,5 +46,17 @@ export const humanReadableMillis = (milliSeconds) => {
     const minutes = Math.floor((seconds % 3600) / 60);
     const remainingSeconds = seconds % 60;
     return `${hours}h ${minutes}m ${remainingSeconds}s`;
+  }
+};
+
+
+export const processAppIcon = async (activities) => {
+  const { AppPackaging } = NativeModules;
+  const processedPackage = await AppPackaging.preprocessAppPackageInfo(
+    activities
+  );
+
+  if (processedPackage) {
+    return processedPackage;
   }
 };
