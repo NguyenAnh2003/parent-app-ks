@@ -8,7 +8,13 @@ import {
   RefreshControl,
   Alert,
 } from 'react-native';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from 'react';
 import globalStyle from '../styles/globalStyle';
 import { ScrollView } from 'react-native-gesture-handler';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -17,9 +23,10 @@ import Feather from 'react-native-vector-icons/Feather';
 import ActivityCard from '../components/cards/ActivityCard';
 import UsageChart from '../components/UsageChart';
 import StickyButton from '../components/buttons/StickyButton';
-import { deleteChild } from '../libs';
-import { packageList } from '../mock/activities';
+import { deleteChild, getAllActivities } from '../libs';
+import { c, packageList } from '../mock/activities';
 import TimeLimitModal from '../components/modal/TimeLimitModal';
+import SplashScreen from './SplashScreen';
 
 const styles = StyleSheet.create({
   /** container */
@@ -50,7 +57,16 @@ const styles = StyleSheet.create({
 });
 
 const numDay = 1;
-const numWeek = 1;
+const numWeek = 2;
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'FETCH_ACTIVITIES':
+      return { activities: action.payload, isFetching: false };
+    default:
+      return { ...state };
+  }
+};
 
 const SingleChildScreen = ({ route, navigation }) => {
   /**
@@ -65,6 +81,12 @@ const SingleChildScreen = ({ route, navigation }) => {
 
   /** modal */
   const [modalVisible, setModalVisible] = useState(false);
+
+  /** reducer */
+  const [state, dispatch] = useReducer(reducer, {
+    activities: [],
+    isFetching: true,
+  });
 
   /** native module */
   const { AppPackaging } = NativeModules;
@@ -85,36 +107,38 @@ const SingleChildScreen = ({ route, navigation }) => {
   }, []);
 
   const dataBasedonTime = useMemo(() => {
-    if (option === 'recent') {
-      const today = new Date();
-      const today2 = new Date(today);
-      today2.setDate(today.getDate() - 1);
+    if (state.activities) {
+      if (option === 'recent') {
+        const today = new Date();
+        const today2 = new Date(today);
+        today2.setDate(today.getDate() - 1);
 
-      const todayUsage = packageList.filter((item) => {
-        const itemDate = new Date(item.dateUsed);
-        // Compare timestamps of itemDate and previousDay
-        return (
-          itemDate.getTime() >= today2.getTime() &&
-          itemDate.getTime() < today.getTime()
-        );
-      });
+        const todayUsage = state.activities.filter((item) => {
+          const itemDate = new Date(item.dateUsed);
+          // Compare timestamps of itemDate and previousDay
+          return (
+            itemDate.getTime() >= today2.getTime() &&
+            itemDate.getTime() < today.getTime()
+          );
+        });
 
-      return todayUsage;
-    }
-    if (option === '5 days') {
-      const today = new Date();
+        return todayUsage;
+      }
+      if (option === '5 days') {
+        const today = new Date();
 
-      const previousWeek = new Date(today);
-      previousWeek.setDate(today.getDate() - 7 * numWeek);
+        const previousWeek = new Date(today);
+        previousWeek.setDate(today.getDate() - 7 * numWeek);
 
-      // Filter data for the previous day
-      const previousWeekData = packageList.filter((item) => {
-        const itemDate = new Date(item.dateUsed);
-        // Compare timestamps of itemDate and previousWeek
-        return itemDate >= previousWeek && itemDate < today;
-      });
+        // Filter data for the previous day
+        const previousWeekData = state.activities.filter((item) => {
+          const itemDate = new Date(item.dateUsed);
+          // Compare timestamps of itemDate and previousWeek
+          return itemDate >= previousWeek && itemDate < today;
+        });
 
-      return previousWeekData;
+        return previousWeekData;
+      }
     }
   }, [option]);
 
@@ -124,16 +148,13 @@ const SingleChildScreen = ({ route, navigation }) => {
       const processedPackage = await AppPackaging.preprocessAppPackageInfo(
         dataBasedonTime
       );
+
       if (processedPackage) {
-        setActivities(processedPackage);
+        dispatch({ type: 'FETCH_ACTIVITIES', payload: processedPackage });
       }
     };
 
     fetchData();
-
-    return () => {
-      setActivities();
-    };
   }, [dataBasedonTime, option]);
 
   /** setup header when nav & childId change */
@@ -175,12 +196,36 @@ const SingleChildScreen = ({ route, navigation }) => {
     });
 
     /** fetch child data by childId */
+    const fetchActivities = async () => {
+      const activities = await getAllActivities(childId);
+
+      console.log({ activities });
+
+      if (activities) {
+        const processedActivities = c.map((i) => {
+          const processedDateUsed = i.dateUsed.split('T')[0];
+          const currentTimestamp = Number(i.timeUsed);
+          const id = i.id.toString();
+          return {
+            ...i,
+            id: id,
+            dateUsed: processedDateUsed,
+            timeUsed: currentTimestamp,
+          };
+        });
+        dispatch({ type: 'FETCH_ACTIVITIES', payload: processedActivities });
+      }
+    };
+
+    fetchActivities();
 
     /** remove data */
     return () => {};
   }, [childId, navigation]);
 
-  return (
+  return state.isFetching ? (
+    <SplashScreen />
+  ) : (
     <ScrollView
       contentContainerStyle={{ flex: 1 }}
       refreshControl={
@@ -284,7 +329,7 @@ const SingleChildScreen = ({ route, navigation }) => {
             </Text>
             {/** block activities today */}
             <View style={{ maxHeight: 200 }}>
-              {activities?.length !== 0 ? (
+              {state.activities?.length !== 0 ? (
                 <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                   <View
                     style={{
@@ -295,10 +340,10 @@ const SingleChildScreen = ({ route, navigation }) => {
                       gap: 12,
                     }}
                   >
-                    {activities?.map((i, index) => (
+                    {state.activities?.map((i, index) => (
                       <ActivityCard
                         key={index}
-                        packageName={i.name}
+                        packageName={i.appName}
                         packageImage={i.icon}
                         packageTimeUsed={i.timeUsed}
                         packageDateUsed={i.dateUsed}
@@ -334,7 +379,7 @@ const SingleChildScreen = ({ route, navigation }) => {
                 >
                   Usage Chart
                 </Text>
-                {activities && <UsageChart activities={activities} />}
+                {state.activities && <UsageChart activities={state.activities} />}
               </>
             ) : (
               <></>

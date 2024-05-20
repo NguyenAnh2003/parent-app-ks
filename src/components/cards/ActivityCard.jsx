@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, Image } from 'react-native';
 import React from 'react';
+import { humanReadableMillis } from '../../utils/utils';
 
 const styles = StyleSheet.create({
   pImage: {
@@ -14,7 +15,7 @@ const styles = StyleSheet.create({
     color: '#a5a5a5',
   },
   dateUsedText: {
-    color: '#a5a5a5'
+    color: '#a5a5a5',
   },
   pName: {
     fontSize: 13,
@@ -35,20 +36,27 @@ const ActivityCard = React.memo(
      * @param package time used
      * @param package date used
      */
+
     return (
       <View style={styles.container}>
         <View style={styles.topBox}>
           <Image
             style={styles.pImage}
-            source={{ uri: `data:image/png;base64,${packageImage}`, width: 50, height: 50 }}
+            source={{
+              uri: `data:image/png;base64,${packageImage}`,
+              width: 50,
+              height: 50,
+            }}
           />
-          <View style={{flexDirection: 'column', gap: 3}}>
+          <View style={{ flexDirection: 'column', gap: 3 }}>
             <Text style={styles.pName}>{packageName}</Text>
             <Text style={styles.dateUsedText}>{packageDateUsed}</Text>
           </View>
         </View>
         {/** time used */}
-        <Text style={styles.timeUsedText}>{packageTimeUsed} mins</Text>
+        <Text style={styles.timeUsedText}>
+          {humanReadableMillis(packageTimeUsed)}
+        </Text>
       </View>
     );
   }

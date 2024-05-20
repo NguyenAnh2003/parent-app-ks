@@ -1,5 +1,6 @@
 import { View, Text } from 'react-native';
 import React from 'react';
+import { humanReadableMillis } from '../../utils/utils';
 
 const SmallUsageCard = React.memo(({ color, name, timeUsed }) => {
   /**
@@ -27,7 +28,7 @@ const SmallUsageCard = React.memo(({ color, name, timeUsed }) => {
         ></View>
         <Text style={{ color: 'black' }}>{name} </Text>
       </View>
-      <Text style={{ color: 'black' }}>{timeUsed} mins</Text>
+      <Text style={{ color: 'black' }}>{humanReadableMillis(timeUsed)}</Text>
     </View>
   );
 });

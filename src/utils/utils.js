@@ -28,3 +28,20 @@ export const convertTimestamp = (timestamp) => {
   // Combine formatted date and time
   return `${formattedDate} ${formattedTime}`;
 };
+
+
+export const humanReadableMillis = (milliSeconds) => {
+  const seconds = Math.floor(milliSeconds / 1000);
+  if (seconds < 60) {
+    return `${seconds}s`;
+  } else if (seconds < 3600) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}m ${remainingSeconds}s`;
+  } else {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+    return `${hours}h ${minutes}m ${remainingSeconds}s`;
+  }
+};
