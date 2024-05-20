@@ -102,25 +102,6 @@ const SingleChildScreen = ({ route, navigation }) => {
 
   const onRefresh = useCallback(() => {
     setRefresh(true);
-    /** fetch data again */
-    const fetchActivities = async () => {
-      const activities = await getAllActivities(childId);
-
-      if (activities) {
-        const processedActivities = c.map((i) => {
-          const processedDateUsed = i.dateUsed.split('T')[0];
-          const currentTimestamp = Number(i.timeUsed);
-          const id = i.id.toString();
-          return {
-            ...i,
-            id: id,
-            dateUsed: processedDateUsed,
-            timeUsed: currentTimestamp,
-          };
-        });
-        dispatch({ type: 'FETCH_ACTIVITIES', payload: processedActivities });
-      }
-    };
 
     fetchActivities();
 
@@ -132,7 +113,7 @@ const SingleChildScreen = ({ route, navigation }) => {
       if (option === 'recent') {
         const today = new Date();
         const today2 = new Date(today);
-        today2.setDate(today.getDate() - 1);
+        today2.setDate(today.getDate() - 1 * numDay);
 
         const todayUsage = state.activities.filter((item) => {
           const itemDate = new Date(item.dateUsed);
@@ -161,7 +142,7 @@ const SingleChildScreen = ({ route, navigation }) => {
         return previousWeekData;
       }
     }
-  }, [option]);
+  }, [option, state.activities]);
 
   const processAppIcon = async (activities) => {
     const processedPackage = await AppPackaging.preprocessAppPackageInfo(
@@ -188,6 +169,31 @@ const SingleChildScreen = ({ route, navigation }) => {
 
   //   fetchData();
   // }, [dataBasedonTime, option]);
+
+  /** fetch child data by childId */
+  const fetchActivities = async () => {
+    const activities = await getAllActivities(childId);
+
+    if (activities) {
+      const processedActivities = c.map((i) => {
+        const processedDateUsed = i.dateUsed.split('T')[0];
+        const currentTimestamp = Number(i.timeUsed);
+        const id = i.id.toString();
+        return {
+          ...i,
+          id: id,
+          dateUsed: processedDateUsed,
+          timeUsed: currentTimestamp,
+        };
+      });
+
+      const result = await processAppIcon(processedActivities);
+
+      console.log({result});
+
+      dispatch({ type: 'FETCH_ACTIVITIES', payload: result });
+    }
+  };
 
   /** setup header when nav & childId change */
   useEffect(() => {
@@ -227,30 +233,7 @@ const SingleChildScreen = ({ route, navigation }) => {
       ),
     });
 
-    /** fetch child data by childId */
-    const fetchActivities = async () => {
-      const activities = await getAllActivities(childId);
-
-      if (activities) {
-        const processedActivities = c.map((i) => {
-          const processedDateUsed = i.dateUsed.split('T')[0];
-          const currentTimestamp = Number(i.timeUsed);
-          const id = i.id.toString();
-          return {
-            ...i,
-            id: id,
-            dateUsed: processedDateUsed,
-            timeUsed: currentTimestamp,
-          };
-        });
-
-        const result = await processAppIcon(processedActivities);
-
-        console.log({result});
-
-        dispatch({ type: 'FETCH_ACTIVITIES', payload: result });
-      }
-    };
+    
 
     fetchActivities();
 
@@ -375,7 +358,7 @@ const SingleChildScreen = ({ route, navigation }) => {
                       gap: 12,
                     }}
                   >
-                    {state.activities?.map((i, index) => (
+                    {dataBasedonTime?.map((i, index) => (
                       <ActivityCard
                         key={index}
                         packageName={i.name}
@@ -402,7 +385,7 @@ const SingleChildScreen = ({ route, navigation }) => {
               )}
             </View>
             {/** activities last week view */}
-            {state.activities?.length !== 0 ? (
+            {dataBasedonTime?.length !== 0 ? (
               <>
                 <Text
                   style={{
@@ -414,8 +397,8 @@ const SingleChildScreen = ({ route, navigation }) => {
                 >
                   Usage Chart
                 </Text>
-                {state.activities && (
-                  <UsageChart activities={state.activities} />
+                {dataBasedonTime && (
+                  <UsageChart activities={dataBasedonTime} />
                 )}
               </>
             ) : (
