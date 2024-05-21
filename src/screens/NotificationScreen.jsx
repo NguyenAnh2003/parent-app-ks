@@ -61,17 +61,21 @@ const NotificationScreen = () => {
         <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
       }
     >
-      <View style={[globalStyle.container, { paddingHorizontal: 15, gap: 10 }]}>
-        {state.notifications.map((i, idx) => (
-          <NotificationCard
-            key={idx}
-            id={i.id}
-            childData={i.children}
-            description={i.description}
-            date={i.date}
-          />
-        ))}
-      </View>
+      <ScrollView style={{ flex: 1 }}>
+        <View
+          style={[globalStyle.container, { paddingHorizontal: 15, gap: 10 }]}
+        >
+          {state.notifications.map((i, idx) => (
+            <NotificationCard
+              key={idx}
+              id={i.id}
+              childData={i.children}
+              description={i.description}
+              date={i.date}
+            />
+          ))}
+        </View>
+      </ScrollView>
     </ScrollView>
   );
 };
