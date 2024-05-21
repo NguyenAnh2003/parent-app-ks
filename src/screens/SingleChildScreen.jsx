@@ -310,7 +310,7 @@ const SingleChildScreen = ({ route, navigation }) => {
             </Text>
             {/** block activities today */}
             <View style={{ maxHeight: 200 }}>
-              {state.activities?.length !== 0 ? (
+              {dataBasedonTime?.length !== 0 ? (
                 <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                   <View
                     style={{
