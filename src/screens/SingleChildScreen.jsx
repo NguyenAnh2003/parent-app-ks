@@ -138,9 +138,9 @@ const SingleChildScreen = ({ route, navigation }) => {
   /** fetch child data by childId */
   const fetchActivities = async () => {
     const activities = await getAllActivities(childId);
-
+    console.log("acti",activities);
     if (activities) {
-      const processedActivities = c.map((i) => {
+      const processedActivities = activities.map((i) => {
         const processedDateUsed = i.dateUsed.split('T')[0];
         const currentTimestamp = Number(i.timeUsed);
         const id = i.id.toString();
